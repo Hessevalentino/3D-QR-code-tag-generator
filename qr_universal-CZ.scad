@@ -12,7 +12,7 @@ include <lib/tag_shapes.scad>
 Typ_QR = "Payment"; // [Payment:Platba (cesky QR), URL:Webova adresa, WiFi:WiFi sit, Text:Volny text, Phone:Telefonni cislo, VCard:Vizitka]
 // IMPORTANT: For Czech payment QR (SPD standard), account number MUST be in IBAN format
 // Example: CZ5855000000001265098001 or CZ5855000000001265098001+RZBCCZPP (with BIC)
-// Convert Czech format (123456789/0100) to IBAN at: https://www.cnb.cz/cs/platebni-styk/
+// Convert Czech format (123456789/0100) to IBAN at: https://www.penize.cz/kalkulacky/vypocet-iban
 Cislo_Uctu = "CZ5855000000001265098001";
 Castka = 100.00; // [0:0.01:100000]
 Mena = "CZK";
