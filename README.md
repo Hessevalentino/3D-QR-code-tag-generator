@@ -54,6 +54,36 @@ For two-color printing (e.g. Bambu Lab AMS):
 2. Set `Export Part = QR` > Render (F6) > Export STL
 3. Import both STL files into your slicer, assign different materials
 
+## Czech Payment QR (SPD Standard)
+
+For Czech payment QR codes, the account number **must be in IBAN format**.
+
+### How to Convert Czech Account Number to IBAN
+
+**Step-by-step guide:**
+
+1. **Find your Czech account number** (format: `prefix-account/bank_code`)
+   - Example: `123456789/0100` or `19-123456789/0100`
+
+2. **Open IBAN calculator:** https://www.penize.cz/kalkulacky/vypocet-iban
+
+3. **Enter your account details:**
+   - Prefix (předčíslí): `19` (if you have one, otherwise leave empty)
+   - Account number (číslo účtu): `123456789`
+   - Bank code (kód banky): `0100`
+
+4. **Copy the generated IBAN:**
+   - Result: `CZ5855000000001265098001`
+
+5. **Paste into OpenSCAD:**
+   - English version: `Payment_Account = "CZ5855000000001265098001";`
+   - Czech version: `Cislo_Uctu = "CZ5855000000001265098001";`
+
+**The calculator also provides:**
+- ✅ Bidirectional conversion (IBAN → Czech format)
+- ✅ SWIFT/BIC bank codes
+- ✅ Validation using Czech National Bank methodology
+
 ## Parameters
 
 | Section | Key Parameters |
