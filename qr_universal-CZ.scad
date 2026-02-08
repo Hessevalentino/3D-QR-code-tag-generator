@@ -10,10 +10,13 @@ include <lib/tag_shapes.scad>
 
 /* [Obsah QR kodu] */
 Typ_QR = "Payment"; // [Payment:Platba (cesky QR), URL:Webova adresa, WiFi:WiFi sit, Text:Volny text, Phone:Telefonni cislo, VCard:Vizitka]
-Cislo_Uctu = "123456789/0100";
-Castka = 100; // [0:1:100000]
+// IMPORTANT: For Czech payment QR (SPD standard), account number MUST be in IBAN format
+// Example: CZ5855000000001265098001 or CZ5855000000001265098001+RZBCCZPP (with BIC)
+// Convert Czech format (123456789/0100) to IBAN at: https://www.cnb.cz/cs/platebni-styk/
+Cislo_Uctu = "CZ5855000000001265098001";
+Castka = 100.00; // [0:0.01:100000]
 Mena = "CZK";
-Zprava_Platby = "Platba za sluzby";
+Zprava_Platby = "PLATBA ZA SLUZBY";
 Variabilni_Symbol = "";
 Webova_Adresa = "https://example.com";
 WiFi_Nazev = "MojeSit";
@@ -103,13 +106,19 @@ function circle_hole_y() = Circle_Diameter/2 - Circle_Hole_Edge_Offset - Hole_Di
 function hole_x() = Hole_Position_X;
 function hole_y() = Tag_Shape == "Circle" ? circle_hole_y() : Hole_Position_Y;
 
+// Generate Czech payment QR code according to SPD (Short Payment Descriptor) standard
+// Specification: https://qr-platba.cz/pro-vyvojare/specifikace-formatu/
+// Format: SPD*1.0*ACC:{IBAN}*CC:{currency}*AM:{amount}*X-VS:{variable_symbol}*MSG:{message}
+// Note: ACC (account number in IBAN format) is MANDATORY
 function generate_payment_qr() =
     let(
-        amount_str = Payment_Amount > 0 ? str("*AM:", Payment_Amount) : "",
-        vs_str = Payment_Variable_Symbol != "" ? str("*X-VS:", Payment_Variable_Symbol) : "",
-        msg_str = Payment_Message != "" ? str("*MSG:", Payment_Message) : ""
+        // Format amount with decimal point (max 2 decimal places)
+        amount_str = Castka > 0 ? str("*AM:", Castka) : "",
+        vs_str = Variabilni_Symbol != "" ? str("*X-VS:", Variabilni_Symbol) : "",
+        // Convert message to uppercase for better QR code efficiency (alphanumeric mode)
+        msg_str = Zprava_Platby != "" ? str("*MSG:", Zprava_Platby) : ""
     )
-    str("SPD*1.0*ACC:", Payment_Account, "*CC:", Payment_Currency, amount_str, vs_str, msg_str);
+    str("SPD*1.0*ACC:", Cislo_Uctu, "*CC:", Mena, amount_str, vs_str, msg_str);
 
 function qr_y_offset() =
     Tag_Shape == "Circle" ?

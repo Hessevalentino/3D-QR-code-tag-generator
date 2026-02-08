@@ -10,10 +10,13 @@ include <lib/tag_shapes.scad>
 
 /* [QR Code Content] */
 QR_Type = "Payment"; // [Payment:Czech Payment QR, URL:Website URL, WiFi:WiFi Network, Text:Plain Text, Phone:Phone Number, VCard:Contact Card]
-Payment_Account = "123456789/0100";
-Payment_Amount = 100; // [0:1:100000]
+// IMPORTANT: For Czech payment QR (SPD standard), account number MUST be in IBAN format
+// Example: CZ5855000000001265098001 or CZ5855000000001265098001+RZBCCZPP (with BIC)
+// Convert Czech format (123456789/0100) to IBAN at: https://www.cnb.cz/cs/platebni-styk/
+Payment_Account = "CZ5855000000001265098001";
+Payment_Amount = 100.00; // [0:0.01:100000]
 Payment_Currency = "CZK";
-Payment_Message = "Payment for services";
+Payment_Message = "PAYMENT FOR SERVICES";
 Payment_Variable_Symbol = "";
 URL_Address = "https://example.com";
 WiFi_SSID = "MyNetwork";
@@ -68,10 +71,16 @@ function circle_hole_y() = Circle_Diameter/2 - Circle_Hole_Edge_Offset - Hole_Di
 function hole_x() = Hole_Position_X;
 function hole_y() = Tag_Shape == "Circle" ? circle_hole_y() : Hole_Position_Y;
 
+// Generate Czech payment QR code according to SPD (Short Payment Descriptor) standard
+// Specification: https://qr-platba.cz/pro-vyvojare/specifikace-formatu/
+// Format: SPD*1.0*ACC:{IBAN}*CC:{currency}*AM:{amount}*X-VS:{variable_symbol}*MSG:{message}
+// Note: ACC (account number in IBAN format) is MANDATORY
 function generate_payment_qr() =
     let(
+        // Format amount with decimal point (max 2 decimal places)
         amount_str = Payment_Amount > 0 ? str("*AM:", Payment_Amount) : "",
         vs_str = Payment_Variable_Symbol != "" ? str("*X-VS:", Payment_Variable_Symbol) : "",
+        // Convert message to uppercase for better QR code efficiency (alphanumeric mode)
         msg_str = Payment_Message != "" ? str("*MSG:", Payment_Message) : ""
     )
     str("SPD*1.0*ACC:", Payment_Account, "*CC:", Payment_Currency, amount_str, vs_str, msg_str);
