@@ -9,6 +9,9 @@ Parametric OpenSCAD generator for 3D-printable keychains with embedded QR codes.
 
 ---
 
+<img width="1720" height="800" alt="image" src="https://github.com/user-attachments/assets/21a358ec-2a48-46d2-b582-2a83badc14db" />
+
+
 ## Features
 
 - **6 QR code types** -- Czech Payment (SPD), URL, WiFi, vCard, Phone, Plain Text
